@@ -4,8 +4,6 @@ An Annotation-based Slash Command Utility.
 
 # TODO List:
 
-- [ ] Autocompletion
-
 I'm updating this when I need new features.  
 If you need something Gertrude doesn't have, please open an issue and tell me what issue you want in Gertrude.
 
@@ -45,7 +43,9 @@ import fr.rader.gertrude.annotations.Param;
 import fr.rader.gertrude.annotations.SlashCommand;
 import fr.rader.gertrude.commands.Command;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 
 public class TheCommand extends Command {
 
@@ -82,6 +82,26 @@ public class TheCommand extends Command {
             SlashCommandInteractionEvent event
     ) {
         event.reply("Got required option " + required + " and optional option " + optional).queue();
+    }
+
+    @SlashCommand(
+            command = "select <option>",
+            description = "Select an option out of the given values"
+    )
+    public void hello(
+            @Param(value = "The selected option", autocomplete = "selectOption")
+            String option,
+            SlashCommandInteractionEvent event
+    ) {
+        event.reply("Selected option: " + option).queue();
+    }
+
+    public List<Choice> selectOption(CommandAutoCompleteInteractionEvent event) {
+        return Arrays.asList(
+                new Choice("Option One", "option_1"),
+                new Choice("Option Two", "option_2"),
+                new Choice("Option Three", "option_3")
+        );
     }
 }
 ```

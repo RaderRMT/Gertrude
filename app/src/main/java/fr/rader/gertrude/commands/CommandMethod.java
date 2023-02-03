@@ -3,15 +3,23 @@ package fr.rader.gertrude.commands;
 import fr.rader.gertrude.annotations.Param;
 import fr.rader.gertrude.commands.getters.ClassToCommandElementGetter;
 import fr.rader.gertrude.commands.getters.ClassToOptionGetter;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.Command.Choice;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CommandMethod {
+
+    private static final String AUTOCOMPLETE_RETURN_TYPE = "java.util.List<net.dv8tion.jda.api.interactions.commands.Command$Choice>";
 
     private final String name;
     private final String subcommand;
@@ -20,12 +28,16 @@ public class CommandMethod {
     private final Method method;
     private final Command instance;
 
+    private final Map<String, Method> autoCompleteMethods;
+
     public CommandMethod(String name, String subcommand, String subcommandGroup, Method method, Command instance) {
         this.name = name;
         this.subcommand = subcommand;
         this.subcommandGroup = subcommandGroup;
         this.method = method;
         this.instance = instance;
+
+        this.autoCompleteMethods = new HashMap<>();
     }
 
     /**
@@ -44,6 +56,26 @@ public class CommandMethod {
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Get the autocompletion choices from the given option and event
+     */
+    public List<Choice> getAutoCompleteChoices(String optionName, CommandAutoCompleteInteractionEvent event) {
+        Method autoCompleteMethod = this.autoCompleteMethods.get(optionName);
+
+        List<Choice> choices = null;
+        try {
+            choices = (List<Choice>) autoCompleteMethod.invoke(this.instance, event);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        if (choices == null) {
+            choices = new ArrayList<>();
+        }
+
+        return choices;
     }
 
     /**
@@ -80,6 +112,50 @@ public class CommandMethod {
         }
 
         return parameters;
+    }
+
+    /**
+     * Get all the autocompletion methods and caches them
+     *
+     * @param options   The options to get the option names from
+     */
+    void cacheAutoCompleteMethods(List<OptionData> options) {
+        int optionIndex = 0;
+        for (Parameter parameter : this.method.getParameters()) {
+            Param param = parameter.getAnnotation(Param.class);
+            if (param == null) {
+                continue;
+            }
+
+            OptionData option = options.get(optionIndex++);
+            String autoCompleteMethodName = param.autocomplete();
+            if (autoCompleteMethodName.isEmpty()) {
+                continue;
+            }
+
+            Method autoCompleteMethod = null;
+            try {
+                autoCompleteMethod = this.instance.getClass().getDeclaredMethod(autoCompleteMethodName, CommandAutoCompleteInteractionEvent.class);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+
+            if (autoCompleteMethod == null) {
+                return;
+            }
+
+            if (Modifier.isStatic(autoCompleteMethod.getModifiers())) {
+                System.err.println("AutoComplete method " + autoCompleteMethod + " is static!");
+                continue;
+            }
+
+            if (!autoCompleteMethod.getGenericReturnType().getTypeName().equals(AUTOCOMPLETE_RETURN_TYPE)) {
+                return;
+            }
+
+            autoCompleteMethod.setAccessible(true);
+            this.autoCompleteMethods.put(option.getName(), autoCompleteMethod);
+        }
     }
 
     /**

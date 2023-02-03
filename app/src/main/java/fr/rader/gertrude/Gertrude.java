@@ -1,6 +1,7 @@
 package fr.rader.gertrude;
 
 import fr.rader.gertrude.commands.*;
+import fr.rader.gertrude.events.SlashCommandAutoCompleteListener;
 import fr.rader.gertrude.events.SlashCommandListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -27,6 +28,7 @@ public final class Gertrude {
         this.state = GertrudeState.EVENTS_REGISTERED;
 
         this.jda.addEventListener(new SlashCommandListener());
+        this.jda.addEventListener(new SlashCommandAutoCompleteListener());
     }
 
     /**

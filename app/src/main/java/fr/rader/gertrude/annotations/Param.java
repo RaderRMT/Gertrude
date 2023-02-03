@@ -23,4 +23,16 @@ public @interface Param {
      * </pre>
      */
     String value();
+
+    /**
+     * The value of this should be the autocompletion method's name.
+     * The autocompletion method must have the following definition:
+     *
+     * <pre>
+     *     public java.util.List<net.dv8tion.jda.api.interactions.commands.Command.Choice> autoCompletionMethod(net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent event) {
+     *         // code...
+     *     }
+     * </pre>
+     */
+    String autocomplete() default "";
 }

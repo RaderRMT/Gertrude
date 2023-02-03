@@ -70,6 +70,7 @@ public final class CommandRegistry {
         }
 
         scanSubcommands();
+        List<OptionData> options;
         if (this.subcommandName != null) {
             if (command.hasSubcommand(this.subcommandGroupName, this.subcommandName)) {
                 System.err.println("Command '" + slashCommand.command() + "' already exists (ignoring the options)");
@@ -81,7 +82,7 @@ public final class CommandRegistry {
                     slashCommand.subcommandDescription()
             );
 
-            List<OptionData> options = buildOptions(method);
+            options = buildOptions(method);
             if (options == null) {
                 return;
             }
@@ -106,7 +107,7 @@ public final class CommandRegistry {
                 command.addSubcommands(subcommandData);
             }
         } else {
-            List<OptionData> options = buildOptions(method);
+            options = buildOptions(method);
             if (options == null) {
                 return;
             }
@@ -114,13 +115,17 @@ public final class CommandRegistry {
             command.addOptions(options);
         }
 
-        this.commandMethods.add(new CommandMethod(
+        CommandMethod commandMethod = new CommandMethod(
                 name.getLexeme(),
                 this.subcommandName,
                 this.subcommandGroupName,
                 method,
                 commandInstance
-        ));
+        );
+
+        commandMethod.cacheAutoCompleteMethods(options);
+
+        this.commandMethods.add(commandMethod);
     }
 
     /**
@@ -155,7 +160,8 @@ public final class CommandRegistry {
                     TypeTable.get(parameter.getType()),
                     optionToken.getLexeme(),
                     description.value(),
-                    optionToken.getKind().equals(TokenKind.PARAM_REQUIRED)
+                    optionToken.getKind().equals(TokenKind.PARAM_REQUIRED),
+                    !description.autocomplete().isEmpty()
             ));
 
             this.scanner.nextToken();
@@ -238,11 +244,14 @@ public final class CommandRegistry {
         return slashCommands;
     }
 
-    /**
-     * Returns all the commands we added without converting them to {@link SlashCommandData} objects.
-     */
-    public List<CommandMethod> getCommandMethods() {
-        return this.commandMethods;
+    public CommandMethod getCommandMethod(String commandName, String subcommandName, String subcommandGroupName) {
+        for (CommandMethod command : this.commandMethods) {
+            if (command.matches(commandName, subcommandName, subcommandGroupName)) {
+                return command;
+            }
+        }
+
+        return null;
     }
 
     public static CommandRegistry getInstance() {

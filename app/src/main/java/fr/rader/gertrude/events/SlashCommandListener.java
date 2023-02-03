@@ -10,11 +10,10 @@ public final class SlashCommandListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        for (CommandMethod commandMethod : CommandRegistry.getInstance().getCommandMethods()) {
-            if (commandMethod.matches(event.getName(), event.getSubcommandName(), event.getSubcommandGroup())) {
-                commandMethod.invoke(event);
-                return;
-            }
+        CommandMethod command = CommandRegistry.getInstance().getCommandMethod(event.getName(), event.getSubcommandName(), event.getSubcommandGroup());
+
+        if (command != null) {
+            command.invoke(event);
         }
     }
 }
