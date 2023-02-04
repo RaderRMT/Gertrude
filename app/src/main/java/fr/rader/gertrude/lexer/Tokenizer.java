@@ -4,7 +4,7 @@ import fr.rader.gertrude.lexer.exceptions.LexingException;
 import fr.rader.gertrude.lexer.tokens.Token;
 import fr.rader.gertrude.lexer.tokens.TokenKind;
 
-public class Tokenizer {
+public final class Tokenizer {
 
     private final String command;
 

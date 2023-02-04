@@ -1,10 +1,11 @@
-package fr.rader.gertrude.commands;
+package fr.rader.gertrude.commands;^
 
 import fr.rader.gertrude.annotations.Param;
 import fr.rader.gertrude.annotations.SlashCommand;
 import fr.rader.gertrude.lexer.Scanner;
 import fr.rader.gertrude.lexer.tokens.Token;
 import fr.rader.gertrude.lexer.tokens.TokenKind;
+import fr.rader.gertrude.utils.Checks;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.*;
 
@@ -36,6 +37,8 @@ public final class CommandRegistry {
      * @param command   The class to register the commands from
      */
     public void registerCommandClass(Command command) {
+        Checks.notNull("command", "CommandRegistry#registerCommandClass", command);
+
         for (Method method : command.getCommandMethods()) {
             addCommand(command, method);
         }
@@ -214,7 +217,7 @@ public final class CommandRegistry {
 
     /**
      * Return and skip the current token if the given TokenKind matches the current token's TokenKind.
-     * If they don't match, we print an error message and return null
+     * If they don't match, we print an error message and return {@code null}
      */
     private Token expect(TokenKind kind, String use) {
         // we get the next token
@@ -244,7 +247,17 @@ public final class CommandRegistry {
         return slashCommands;
     }
 
+    /**
+     * Get a {@link CommandMethod} from the internal list
+     *
+     * @param commandName           The command name
+     * @param subcommandName        The subcommand name
+     * @param subcommandGroupName   The subcommand group name
+     * @return                      The {@link CommandMethod} if one matches, {@code null} otherwise
+     */
     public CommandMethod getCommandMethod(String commandName, String subcommandName, String subcommandGroupName) {
+        Checks.notNull("commandName", "CommandRegistry#getCommandMethod", commandName);
+
         for (CommandMethod command : this.commandMethods) {
             if (command.matches(commandName, subcommandName, subcommandGroupName)) {
                 return command;

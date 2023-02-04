@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.interactions.commands.build.*;
 
 import java.util.*;
 
-public class DiscordSlashCommand {
+public final class DiscordSlashCommand {
 
     private final String name;
     private final String description;
@@ -13,7 +13,7 @@ public class DiscordSlashCommand {
     private final List<SubcommandData> subcommands;
     private final List<OptionData> options;
 
-    public DiscordSlashCommand(String name, String description) {
+    DiscordSlashCommand(String name, String description) {
         this.name = name;
         this.description = description;
 

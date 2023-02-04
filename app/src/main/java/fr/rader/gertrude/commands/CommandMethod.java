@@ -3,6 +3,7 @@ package fr.rader.gertrude.commands;
 import fr.rader.gertrude.annotations.Param;
 import fr.rader.gertrude.commands.getters.ClassToCommandElementGetter;
 import fr.rader.gertrude.commands.getters.ClassToOptionGetter;
+import fr.rader.gertrude.utils.Checks;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
@@ -17,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CommandMethod {
+public final class CommandMethod {
 
     private static final String AUTOCOMPLETE_RETURN_TYPE = "java.util.List<net.dv8tion.jda.api.interactions.commands.Command$Choice>";
 
@@ -30,7 +31,7 @@ public class CommandMethod {
 
     private final Map<String, Method> autoCompleteMethods;
 
-    public CommandMethod(String name, String subcommand, String subcommandGroup, Method method, Command instance) {
+    CommandMethod(String name, String subcommand, String subcommandGroup, Method method, Command instance) {
         this.name = name;
         this.subcommand = subcommand;
         this.subcommandGroup = subcommandGroup;
@@ -46,6 +47,8 @@ public class CommandMethod {
      * @param event     The event that triggered the invoke
      */
     public void invoke(SlashCommandInteractionEvent event) {
+        Checks.notNull("event", "CommandMethod#invoke", event);
+
         List<Object> parameters = buildParameters(event);
 
         try {
@@ -62,6 +65,9 @@ public class CommandMethod {
      * Get the autocompletion choices from the given option and event
      */
     public List<Choice> getAutoCompleteChoices(String optionName, CommandAutoCompleteInteractionEvent event) {
+        Checks.notNull("optionName", "CommandMethod#getAutoCompleteChoices", optionName);
+        Checks.notNull("event", "CommandMethod#getAutoCompleteChoices", event);
+
         Method autoCompleteMethod = this.autoCompleteMethods.get(optionName);
 
         List<Choice> choices = null;
@@ -161,7 +167,7 @@ public class CommandMethod {
     /**
      * Returns true if this command has the same name, subcommand and subcommand group as the given parameters, false otherwise
      */
-    public boolean matches(String name, String subcommand, String subcommandGroup) {
+    boolean matches(String name, String subcommand, String subcommandGroup) {
         if (!this.name.equalsIgnoreCase(name)) {
             return false;
         }

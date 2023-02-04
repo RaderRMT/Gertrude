@@ -1,18 +1,21 @@
 package fr.rader.gertrude.commands.getters;
 
+import fr.rader.gertrude.utils.Checks;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 
 import java.lang.reflect.Member;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class ClassToCommandElementGetter {
+public final class ClassToCommandElementGetter {
 
     private static final Map<Class<?>, Function<SlashCommandInteractionEvent, Object>> functionMap = new HashMap<>();
+
+    // private constructor, we don't want an instance of this class
+    private ClassToCommandElementGetter() {
+    }
 
     /**
      * Get the corresponding Object based on the given Class.
@@ -22,6 +25,8 @@ public class ClassToCommandElementGetter {
      *                  or the corresponding Object if it exists
      */
     public static Function<SlashCommandInteractionEvent, Object> get(Class<?> clazz) {
+        Checks.notNull("clazz", "ClassToCommandElementGetter#get", clazz);
+
         return functionMap.get(clazz);
     }
 

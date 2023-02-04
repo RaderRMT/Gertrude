@@ -3,8 +3,14 @@ package fr.rader.gertrude;
 import fr.rader.gertrude.commands.*;
 import fr.rader.gertrude.events.SlashCommandAutoCompleteListener;
 import fr.rader.gertrude.events.SlashCommandListener;
+import fr.rader.gertrude.utils.Checks;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public final class Gertrude {
 
@@ -52,13 +58,11 @@ public final class Gertrude {
      * @param <T>       The type of the instance to add
      */
     public <T> void addCommandParameter(Class<T> clazz, T instance) {
+        Checks.notNull("class", "Gertrude#addCommandParameter", clazz);
+        Checks.notNull("class instance", "Gertrude#addCommandParameter", instance);
+
         checkState("addCommandParameter", GertrudeState.EVENTS_REGISTERED, GertrudeState.PARAMS_ADDED);
         this.state = GertrudeState.PARAMS_ADDED;
-
-        if (clazz == null || instance == null) {
-            System.err.println("Cannot add parameter: class or/and instance are null");
-            return;
-        }
 
         if (
                 TypeTable.get(clazz) != null ||
@@ -78,39 +82,54 @@ public final class Gertrude {
      * @param <T>       The type of the class. We only accept classes extending {@link Command}
      */
     public <T extends Command> void addCommand(T command) {
+        Checks.notNull("command", "Gertrude#addCommand", command);
+
         checkState("addCommand", GertrudeState.EVENTS_REGISTERED, GertrudeState.PARAMS_ADDED, GertrudeState.COMMANDS_ADDED);
         this.state = GertrudeState.COMMANDS_ADDED;
-
-        if (command == null) {
-            System.err.println("Cannot add command: command is null");
-            return;
-        }
 
         CommandRegistry.getInstance().registerCommandClass(command);
     }
 
     /**
-     * Register the commands to the given guilds
+     * Register the commands to the given guilds, or all the guilds of none are provided
      *
      * @param guilds    The guilds to add the commands to
      */
     public void registerCommands(Guild... guilds) {
+        Checks.notNull("guilds", "Gertrude#registerCommands", guilds);
+
         checkState("registerCommands", GertrudeState.COMMANDS_ADDED);
         this.state = GertrudeState.COMMANDS_REGISTERED;
 
+        // get the commands from the command registry
+        List<SlashCommandData> commands = CommandRegistry.getInstance().getDiscordCommands();
+
+        // register the commands to all guilds
         if (guilds.length == 0) {
             this.jda.updateCommands()
-                    .addCommands(CommandRegistry.getInstance().getDiscordCommands())
+                    .addCommands(commands)
                     .queue();
 
             return;
         }
 
+        // register the commands to specific guilds
         for (Guild guild : guilds) {
             guild.updateCommands()
-                 .addCommands(CommandRegistry.getInstance().getDiscordCommands())
+                 .addCommands(commands)
                  .queue();
         }
+    }
+
+    /**
+     * Register the commands to the given guilds, or all the guilds of none are provided
+     *
+     * @param guilds    The guilds to add the commands to
+     */
+    public void registerCommands(Collection<? extends Guild> guilds) {
+        Checks.notNull("guilds", "Gertrude#registerCommands", guilds);
+
+        registerCommands(guilds.toArray(new Guild[0]));
     }
 
     /**
@@ -121,6 +140,7 @@ public final class Gertrude {
      */
     public static Gertrude summonGertrude(JDA jda) {
         if (instance == null) {
+            Checks.notNull("jda", "Gertrude#summonGertrude", jda);
             instance = new Gertrude(jda);
         }
 
@@ -134,13 +154,16 @@ public final class Gertrude {
      * @param states    The states that we expect Gertrude to be in
      */
     private void checkState(String caller, GertrudeState... states) {
-        for (GertrudeState state : states) {
-            if (state == this.state) {
-                return;
-            }
+        if (Arrays.stream(states).noneMatch(state -> state == this.state)) {
+            throw new IllegalStateException(caller + " cannot be called in the " + this.state + " state");
         }
+    }
 
-        throw new IllegalStateException(caller + " cannot be called in the " + this.state + " state");
+    /**
+     * Return the JDA instance
+     */
+    public JDA getJda() {
+        return this.jda;
     }
 
     // internal gertrude states.

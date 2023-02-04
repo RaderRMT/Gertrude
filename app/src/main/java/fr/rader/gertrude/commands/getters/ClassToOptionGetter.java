@@ -1,5 +1,6 @@
 package fr.rader.gertrude.commands.getters;
 
+import fr.rader.gertrude.utils.Checks;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -9,9 +10,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class ClassToOptionGetter {
+public final class ClassToOptionGetter {
 
     private static final Map<Class<?>, Function<OptionMapping, Object>> functionMap = new HashMap<>();
+
+    // private constructor, we don't want an instance of this class
+    private ClassToOptionGetter() {
+    }
 
     /**
      * Get the corresponding {@link OptionType} based on the given Class.
@@ -21,6 +26,8 @@ public class ClassToOptionGetter {
      *                  or the corresponding OptionType if it exists
      */
     public static Function<OptionMapping, Object> get(Class<?> clazz) {
+        Checks.notNull("clazz", "ClassToOptionGetter#get", clazz);
+
         return functionMap.get(clazz);
     }
 

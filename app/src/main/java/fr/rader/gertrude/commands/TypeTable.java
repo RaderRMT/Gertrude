@@ -1,5 +1,6 @@
 package fr.rader.gertrude.commands;
 
+import fr.rader.gertrude.utils.Checks;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 
@@ -7,9 +8,13 @@ import java.lang.reflect.Member;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TypeTable {
+public final class TypeTable {
 
     private static final Map<Class<?>, OptionType> typeTable = new HashMap<>();
+
+    // private constructor, we don't want an instance of this class
+    private TypeTable() {
+    }
 
     /**
      * Get the corresponding {@link OptionType} based on the given Class.
@@ -19,6 +24,8 @@ public class TypeTable {
      *                  or the corresponding OptionType if it exists
      */
     public static OptionType get(Class<?> clazz) {
+        Checks.notNull("clazz", "TypeTable#get", clazz);
+
         return typeTable.get(clazz);
     }
 

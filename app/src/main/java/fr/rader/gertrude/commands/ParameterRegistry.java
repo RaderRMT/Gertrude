@@ -1,5 +1,7 @@
 package fr.rader.gertrude.commands;
 
+import fr.rader.gertrude.utils.Checks;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +22,9 @@ public final class ParameterRegistry {
      * @param instance  The instance to link to the class
      */
     public void add(Class<?> clazz, Object instance) {
+        Checks.notNull("clazz", "ParameterRegistry#add", clazz);
+        Checks.notNull("instance", "ParameterRegistry#add", instance);
+
         this.classToInstance.put(clazz, instance);
     }
 

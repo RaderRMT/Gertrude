@@ -1,6 +1,5 @@
 package fr.rader.gertrude.annotations;
 
-import javax.annotation.Nonnull;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
