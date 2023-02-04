@@ -1,4 +1,4 @@
-package fr.rader.gertrude.commands;^
+package fr.rader.gertrude.commands;
 
 import fr.rader.gertrude.annotations.Param;
 import fr.rader.gertrude.annotations.SlashCommand;
