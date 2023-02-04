@@ -141,7 +141,7 @@ public class CommandMethod {
             }
 
             if (autoCompleteMethod == null) {
-                return;
+                continue;
             }
 
             if (Modifier.isStatic(autoCompleteMethod.getModifiers())) {
@@ -150,7 +150,7 @@ public class CommandMethod {
             }
 
             if (!autoCompleteMethod.getGenericReturnType().getTypeName().equals(AUTOCOMPLETE_RETURN_TYPE)) {
-                return;
+                continue;
             }
 
             autoCompleteMethod.setAccessible(true);
