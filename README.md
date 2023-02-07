@@ -9,6 +9,20 @@ If you need something Gertrude doesn't have, please open an issue and tell me wh
 
 As I don't really have the time to write a good README, here is the code to setup Gertrude with JDA and register commands.
 
+### Installing Gertrude
+
+```kotlin
+repositories {
+    maven {
+        url = uri("https://repo.rader.fr/releases")
+    }
+}
+
+dependencies {
+    implementation("fr.rader:gertrude:1.0.1")
+}
+```
+
 ### Setting Gertrude Up
 
 ```java
