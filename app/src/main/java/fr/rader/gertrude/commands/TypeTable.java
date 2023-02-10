@@ -8,6 +8,9 @@ import java.lang.reflect.Member;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Util class to get an {@link OptionType} from the given class.
+ */
 public final class TypeTable {
 
     private static final Map<Class<?>, OptionType> typeTable = new HashMap<>();

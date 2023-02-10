@@ -5,6 +5,9 @@ import fr.rader.gertrude.utils.Checks;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A class that holds a list of all the parameters we have and can give to our command methods.
+ */
 public final class ParameterRegistry {
 
     private static ParameterRegistry instance;
@@ -39,8 +42,11 @@ public final class ParameterRegistry {
         return this.classToInstance.get(clazz);
     }
 
-    // return the ParameterRegistry's instance.
-    // this is a singleton as we only want one instance of this class
+    /**
+     * As the ParameterRegistry is a singleton for practical use, we have a getter for its instance
+     *
+     * @return  The ParameterRegistry's instance
+     */
     public static ParameterRegistry getInstance() {
         if (instance == null) {
             instance = new ParameterRegistry();

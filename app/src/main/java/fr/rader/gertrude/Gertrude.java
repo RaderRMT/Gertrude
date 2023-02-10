@@ -12,6 +12,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * This is the brain where you can add new commands and parameters, and send them to Discord as actual commands.
+ * To get an instance of this class, you must call {@link Gertrude#summonGertrude(JDA)}.
+ * I recommend you call the summonGertrude method after getting your JDA instance.
+ */
 public final class Gertrude {
 
     private static Gertrude instance;
@@ -160,7 +165,9 @@ public final class Gertrude {
     }
 
     /**
-     * Return the JDA instance
+     * Return Gertrude's JDA instance
+     *
+     * @return Gertrude's JDA instance
      */
     public JDA getJda() {
         return this.jda;

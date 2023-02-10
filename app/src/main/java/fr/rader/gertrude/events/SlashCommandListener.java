@@ -6,6 +6,12 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * This is an implementation of JDA's ListenerAdapter.
+ * It only listens to slash commands.
+ * When a slash command even is triggered, we get the command from the command registry
+ * and we invoke the command method attached to it.
+ */
 public final class SlashCommandListener extends ListenerAdapter {
 
     @Override

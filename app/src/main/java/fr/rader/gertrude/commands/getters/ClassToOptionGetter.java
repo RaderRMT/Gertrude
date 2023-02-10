@@ -3,13 +3,16 @@ package fr.rader.gertrude.commands.getters;
 import fr.rader.gertrude.utils.Checks;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 
 import java.lang.reflect.Member;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Util class to get a {@link Function} from the given class.
+ * This Function is then used to get a specific object from JDA's {@link OptionMapping}s
+ */
 public final class ClassToOptionGetter {
 
     private static final Map<Class<?>, Function<OptionMapping, Object>> functionMap = new HashMap<>();
@@ -19,11 +22,11 @@ public final class ClassToOptionGetter {
     }
 
     /**
-     * Get the corresponding {@link OptionType} based on the given Class.
+     * Get a getter {@link Function} depending on the given class.
+     * This Function is then used to get a specific object from JDA's {@link OptionMapping}s
      *
-     * @param clazz     The class to get the corresponding OptionType to
-     * @return          {@code null} if the class has no corresponding type,
-     *                  or the corresponding OptionType if it exists
+     * @param clazz The class to get the getter for
+     * @return      A {@link Function} if the class has a getter for it, {@code null} otherwise
      */
     public static Function<OptionMapping, Object> get(Class<?> clazz) {
         Checks.notNull("clazz", "ClassToOptionGetter#get", clazz);

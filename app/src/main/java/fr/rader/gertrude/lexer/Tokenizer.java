@@ -4,6 +4,9 @@ import fr.rader.gertrude.lexer.exceptions.LexingException;
 import fr.rader.gertrude.lexer.tokens.Token;
 import fr.rader.gertrude.lexer.tokens.TokenKind;
 
+/**
+ * Turns the given command into tokens.
+ */
 public final class Tokenizer {
 
     private final String command;
@@ -11,12 +14,19 @@ public final class Tokenizer {
     private int end = 0;
     private int start = 0;
 
+    /**
+     * Create a new tokenizer
+     *
+     * @param command   The command to read
+     */
     public Tokenizer(String command) {
         this.command = command;
     }
 
     /**
      * Read a token from the command string.
+     *
+     * @return  The token read from the command string
      */
     public Token readToken() {
         while (hasNext()) {
@@ -134,7 +144,7 @@ public final class Tokenizer {
     }
 
     /**
-     * Return true if there are more tokens to read, false otherwise
+     * @return  true if there are more tokens to read, false otherwise
      */
     public boolean hasNext() {
         return this.end < this.command.length();

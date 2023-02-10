@@ -5,6 +5,9 @@ import fr.rader.gertrude.lexer.tokens.Token;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Read the command string token by token, where a token is either delimited by spaces, diamonds or square brackets
+ */
 public final class Scanner {
 
     private final Tokenizer tokenizer;
@@ -16,6 +19,11 @@ public final class Scanner {
     // The current token (set by nextToken())
     private Token currentToken;
 
+    /**
+     * Create a new Scanner with the given command
+     *
+     * @param command   The command to read
+     */
     public Scanner(String command) {
         this.savedTokens = new ArrayList<>();
         this.tokenizer = new Tokenizer(command);
@@ -28,6 +36,9 @@ public final class Scanner {
 
     /**
      * Return the token at the given lookahead.
+     *
+     * @param lookahead     The position to get the token at
+     * @return              The token at the given lookahead
      */
     public Token token(int lookahead) {
         if (lookahead == 0) {
@@ -48,7 +59,7 @@ public final class Scanner {
     }
 
     /**
-     * Return the current token.
+     * @return  Return the current token
      */
     public Token token() {
         return token(0);

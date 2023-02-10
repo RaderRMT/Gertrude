@@ -9,18 +9,15 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.util.*;
 
+/**
+ * Holds handy methods to cache, validate and call autocompletion methods, and to call command methods
+ */
 public final class CommandMethod {
 
-    private static final String AUTOCOMPLETE_RETURN_TYPE = "java.util.List<net.dv8tion.jda.api.interactions.commands.Command$Choice>";
+    private static final String AUTOCOMPLETE_COLLECTION_TYPE = "net.dv8tion.jda.api.interactions.commands.Command$Choice";
 
     private final String name;
     private final String subcommand;
@@ -63,12 +60,19 @@ public final class CommandMethod {
 
     /**
      * Get the autocompletion choices from the given option and event
+     *
+     * @param optionName    The option to get the autocompletion choices for
+     * @param event         The event to give to the autocompletion method
+     * @return              The list of choices to send to Discord
      */
     public List<Choice> getAutoCompleteChoices(String optionName, CommandAutoCompleteInteractionEvent event) {
         Checks.notNull("optionName", "CommandMethod#getAutoCompleteChoices", optionName);
         Checks.notNull("event", "CommandMethod#getAutoCompleteChoices", event);
 
         Method autoCompleteMethod = this.autoCompleteMethods.get(optionName);
+        if (autoCompleteMethod == null) {
+            return new ArrayList<>();
+        }
 
         List<Choice> choices = null;
         try {
@@ -88,6 +92,7 @@ public final class CommandMethod {
      * Get all object instances from the {@link ParameterRegistry}, or the {@link SlashCommandInteractionEvent} and add them to a list.
      *
      * @param event     The even to get data from
+     * @return          A list of objects (the parameters) to give to the command method
      */
     private List<Object> buildParameters(SlashCommandInteractionEvent event) {
         List<Object> parameters = new ArrayList<>();
@@ -155,7 +160,15 @@ public final class CommandMethod {
                 continue;
             }
 
-            if (!autoCompleteMethod.getGenericReturnType().getTypeName().equals(AUTOCOMPLETE_RETURN_TYPE)) {
+            if (!Collection.class.isAssignableFrom(autoCompleteMethod.getReturnType())) {
+                System.err.println("Return value for autocomplete method " + autoCompleteMethod + " is not a Collection!");
+                continue;
+            }
+
+            ParameterizedType type = (ParameterizedType) autoCompleteMethod.getGenericReturnType();
+            Type[] args = type.getActualTypeArguments();
+            if (args.length != 1 || !args[0].getTypeName().equals(AUTOCOMPLETE_COLLECTION_TYPE)) {
+                System.err.println("Collection type for autocomplete method " + autoCompleteMethod + " return value is not a JDA Command.Choice!");
                 continue;
             }
 
@@ -166,6 +179,11 @@ public final class CommandMethod {
 
     /**
      * Returns true if this command has the same name, subcommand and subcommand group as the given parameters, false otherwise
+     *
+     * @param name              The command's name
+     * @param subcommand        The command's subcommand
+     * @param subcommandGroup   The command's subcommand group
+     * @return                  true if the command matches with the given string, false otherwise
      */
     boolean matches(String name, String subcommand, String subcommandGroup) {
         if (!this.name.equalsIgnoreCase(name)) {

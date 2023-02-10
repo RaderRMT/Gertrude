@@ -1,10 +1,22 @@
 package fr.rader.gertrude.lexer.tokens;
 
+/**
+ * The different kind of tokens we can find in a command string
+ */
 public enum TokenKind {
 
-    // subcommand or subcommand group
+    /**
+     * This denotes a subcommand or subcommand group
+     */
     NAME,
-    // parameters
+
+    /**
+     * This denotes a required parameters
+     */
     PARAM_REQUIRED,
+
+    /**
+     * This denotes an optional parameters
+     */
     PARAM_OPTIONAL
 }

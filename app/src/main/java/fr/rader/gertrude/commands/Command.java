@@ -6,10 +6,25 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An abstract class which caches and helps Gertrude to get all the slash commands you defined.
+ * You don't have to do anything else except extend this class.
+ *
+ * <h2>Example:</h2>
+ * <pre><code>
+ * public class MyCommand extends Command {
+ *     // code...
+ * }
+ * </code></pre>
+ */
 public abstract class Command {
 
     private final List<Method> commandMethods;
 
+    /**
+     * Caches all the methods annotated with the {@link SlashCommand} annotation.
+     * This constructor is private because we don't want to be able to create empty Commands.
+     */
     protected Command() {
         this.commandMethods = new ArrayList<>();
 

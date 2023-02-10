@@ -14,6 +14,11 @@ import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class that holds a list of all the methods we have and can call.
+ * This is used as a builder to turn methods with the {@link SlashCommand} annotation
+ * to {@link DiscordSlashCommand} objects, and later {@link SlashCommandData} before sending them to discord
+ */
 public final class CommandRegistry {
 
     private static CommandRegistry instance;
@@ -236,6 +241,8 @@ public final class CommandRegistry {
 
     /**
      * Build all the commands we added to {@link SlashCommandData} objects and return them as a list.
+     *
+     * @return  The list of commands to send to discord
      */
     public List<SlashCommandData> getDiscordCommands() {
         List<SlashCommandData> slashCommands = new ArrayList<>();
@@ -267,6 +274,11 @@ public final class CommandRegistry {
         return null;
     }
 
+    /**
+     * As the CommandRegistry is a singleton for practical use, we have a getter for its instance
+     *
+     * @return  The CommandRegistry's instance
+     */
     public static CommandRegistry getInstance() {
         if (instance == null) {
             instance = new CommandRegistry();

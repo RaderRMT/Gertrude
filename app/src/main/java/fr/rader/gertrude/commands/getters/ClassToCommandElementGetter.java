@@ -9,6 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Util class to get a {@link Function} from the given class.
+ * This Function is then used to get a specific object from JDA's {@link SlashCommandInteractionEvent}s
+ */
 public final class ClassToCommandElementGetter {
 
     private static final Map<Class<?>, Function<SlashCommandInteractionEvent, Object>> functionMap = new HashMap<>();
@@ -18,11 +22,11 @@ public final class ClassToCommandElementGetter {
     }
 
     /**
-     * Get the corresponding Object based on the given Class.
+     * Get a getter {@link Function} depending on the given class.
+     * This Function is then used to get specific objects from JDA's {@link SlashCommandInteractionEvent}s
      *
-     * @param clazz     The class to get the corresponding Object to
-     * @return          {@code null} if the class has no corresponding type,
-     *                  or the corresponding Object if it exists
+     * @param clazz The class to get the getter for
+     * @return      A {@link Function} if the class has a getter for it, {@code null} otherwise
      */
     public static Function<SlashCommandInteractionEvent, Object> get(Class<?> clazz) {
         Checks.notNull("clazz", "ClassToCommandElementGetter#get", clazz);

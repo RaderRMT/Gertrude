@@ -6,6 +6,12 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * This is an implementation of JDA's ListenerAdapter.
+ * It only listens to command autocompletion.
+ * When an autocompletion even is triggered, we get the command from the command registry,
+ * execute the autocomplete method and reply with the returned choices.
+ */
 public final class SlashCommandAutoCompleteListener extends ListenerAdapter {
 
     @Override

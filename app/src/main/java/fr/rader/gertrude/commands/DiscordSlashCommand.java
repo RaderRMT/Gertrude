@@ -4,6 +4,10 @@ import net.dv8tion.jda.api.interactions.commands.build.*;
 
 import java.util.*;
 
+/**
+ * A representation of command methods (methods annotated with {@link fr.rader.gertrude.annotations.SlashCommand}).
+ * This class holds all the subcommands and subcommand groups for one command (commands where the name equals this command's name).
+ */
 public final class DiscordSlashCommand {
 
     private final String name;
