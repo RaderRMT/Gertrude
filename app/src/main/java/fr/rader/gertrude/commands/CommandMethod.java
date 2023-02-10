@@ -106,7 +106,7 @@ public final class CommandMethod {
                 continue;
             }
 
-            if (ClassToOptionGetter.get(parameter.getType()) != null) {
+            if (ClassToCommandElementGetter.get(parameter.getType()) != null) {
                 // the next highest priority is the event's data
                 parameters.add(ClassToCommandElementGetter.get(parameter.getType()).apply(event));
             } else if (parameter.getType().isAssignableFrom(SlashCommandInteractionEvent.class)) {
