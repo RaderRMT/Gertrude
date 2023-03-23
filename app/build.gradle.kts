@@ -36,7 +36,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "fr.rader"
             artifactId = "gertrude"
-            version = "1.1.0"
+            version = "1.1.1"
             from(components["java"])
         }
     }

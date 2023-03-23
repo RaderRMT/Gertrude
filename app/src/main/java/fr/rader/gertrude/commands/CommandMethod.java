@@ -102,7 +102,12 @@ public final class CommandMethod {
             // parameters with the @Param annotation have the highest priority.
             // the data will be extracted from the event's parameters
             if (parameter.isAnnotationPresent(Param.class)) {
-                parameters.add(ClassToOptionGetter.get(parameter.getType()).apply(event.getOptions().get(optionIndex++)));
+                if (optionIndex >= event.getOptions().size()) {
+                    parameters.add(null);
+                } else {
+                    parameters.add(ClassToOptionGetter.get(parameter.getType()).apply(event.getOptions().get(optionIndex++)));
+                }
+
                 continue;
             }
 
