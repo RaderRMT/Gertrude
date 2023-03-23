@@ -2,6 +2,10 @@
 
 An Annotation-based Slash Command Utility.
 
+# Warning:
+
+Gertrude has only been tested with JDA 5.0.0-alpha.10
+
 # TODO List:
 
 I'm updating this when I need new features.  
@@ -19,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    implementation("fr.rader:gertrude:1.0.1")
+    implementation("fr.rader:gertrude:1.1.0")
 }
 ```
 
