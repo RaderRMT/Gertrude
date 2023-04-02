@@ -154,7 +154,7 @@ public final class CommandRegistry {
 
             Token optionToken = this.scanner.token();
             if (optionToken == null) {
-                System.err.println("Missing token for variable with following description: " + description.value());
+                System.err.println("Missing token for variable with following description: " + description.description());
                 return null;
             }
 
@@ -167,7 +167,7 @@ public final class CommandRegistry {
             options.add(new OptionData(
                     TypeTable.get(parameter.getType()),
                     optionToken.getLexeme(),
-                    description.value(),
+                    description.description(),
                     optionToken.getKind().equals(TokenKind.PARAM_REQUIRED),
                     !description.autocomplete().isEmpty()
             ));

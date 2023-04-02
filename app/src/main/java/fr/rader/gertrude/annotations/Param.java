@@ -13,6 +13,16 @@ import java.lang.annotation.Target;
 public @interface Param {
 
     /**
+     * This is the parameter's name.
+     * This must be the same as the &#064;SlashCommand's annotation
+     *
+     * @see     SlashCommand
+     *
+     * @return  The parameter's name
+     */
+    String name();
+
+    /**
      * This is a parameter's description.
      * This must be set in the method's definition:
      *
@@ -31,7 +41,7 @@ public @interface Param {
      *
      * @return  The parameter's description
      */
-    String value();
+    String description();
 
     /**
      * The value of this should be the autocompletion method's name.

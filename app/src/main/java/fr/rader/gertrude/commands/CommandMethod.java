@@ -7,6 +7,7 @@ import fr.rader.gertrude.utils.Checks;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.lang.reflect.*;
@@ -102,10 +103,19 @@ public final class CommandMethod {
             // parameters with the @Param annotation have the highest priority.
             // the data will be extracted from the event's parameters
             if (parameter.isAnnotationPresent(Param.class)) {
+                Param param = parameter.getAnnotation(Param.class);
+
                 if (optionIndex >= event.getOptions().size()) {
                     parameters.add(null);
                 } else {
-                    parameters.add(ClassToOptionGetter.get(parameter.getType()).apply(event.getOptions().get(optionIndex++)));
+                    OptionMapping option = event.getOptions().get(optionIndex);
+
+                    if (!option.getName().equals(param.name())) {
+                        parameters.add(null);
+                    } else {
+                        parameters.add(ClassToOptionGetter.get(parameter.getType()).apply(option));
+                        optionIndex++;
+                    }
                 }
 
                 continue;
