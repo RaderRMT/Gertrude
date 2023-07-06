@@ -1,6 +1,7 @@
 package fr.rader.gertrude.commands;
 
 import fr.rader.gertrude.annotations.SlashCommand;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public abstract class Command {
     /**
      * Returns the cached list of methods having the {@link SlashCommand} annotation associated with them.
      */
+    @NotNull
     final List<Method> getCommandMethods() {
         return this.commandMethods;
     }

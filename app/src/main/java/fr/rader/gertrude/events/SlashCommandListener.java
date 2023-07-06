@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public final class SlashCommandListener extends ListenerAdapter {
 
     @Override
-    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+    public void onSlashCommandInteraction(@NotNull final SlashCommandInteractionEvent event) {
         CommandMethod command = CommandRegistry.getInstance().getCommandMethod(
                 event.getName(),
                 event.getSubcommandName(),

@@ -1,6 +1,8 @@
 package fr.rader.gertrude.lexer;
 
 import fr.rader.gertrude.lexer.tokens.Token;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,7 @@ public final class Scanner {
      *
      * @param command   The command to read
      */
-    public Scanner(String command) {
+    public Scanner(@NotNull final String command) {
         this.savedTokens = new ArrayList<>();
         this.tokenizer = new Tokenizer(command);
 
@@ -40,6 +42,7 @@ public final class Scanner {
      * @param lookahead     The position to get the token at
      * @return              The token at the given lookahead
      */
+    @Nullable
     public Token token(int lookahead) {
         if (lookahead == 0) {
             return this.currentToken;
@@ -61,6 +64,7 @@ public final class Scanner {
     /**
      * @return  Return the current token
      */
+    @Nullable
     public Token token() {
         return token(0);
     }

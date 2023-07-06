@@ -1,6 +1,8 @@
 package fr.rader.gertrude.commands;
 
-import fr.rader.gertrude.utils.Checks;
+import net.dv8tion.jda.internal.utils.Checks;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +26,9 @@ public final class ParameterRegistry {
      * @param clazz     The class to link the instance to
      * @param instance  The instance to link to the class
      */
-    public void add(Class<?> clazz, Object instance) {
-        Checks.notNull("clazz", "ParameterRegistry#add", clazz);
-        Checks.notNull("instance", "ParameterRegistry#add", instance);
+    public void add(@NotNull final Class<?> clazz, @NotNull final Object instance) {
+        Checks.notNull(clazz, "clazz");
+        Checks.notNull(instance, "instance");
 
         this.classToInstance.put(clazz, instance);
     }
@@ -38,7 +40,8 @@ public final class ParameterRegistry {
      * @return          {@code null} if the class has no corresponding object instance,
      *                  or the corresponding object instance if one was added
      */
-    public Object get(Class<?> clazz) {
+    @Nullable
+    public Object get(@NotNull final Class<?> clazz) {
         return this.classToInstance.get(clazz);
     }
 
@@ -47,6 +50,7 @@ public final class ParameterRegistry {
      *
      * @return  The ParameterRegistry's instance
      */
+    @NotNull
     public static ParameterRegistry getInstance() {
         if (instance == null) {
             instance = new ParameterRegistry();

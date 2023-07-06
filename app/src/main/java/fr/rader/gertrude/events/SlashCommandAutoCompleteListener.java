@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public final class SlashCommandAutoCompleteListener extends ListenerAdapter {
 
     @Override
-    public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event) {
+    public void onCommandAutoCompleteInteraction(@NotNull final CommandAutoCompleteInteractionEvent event) {
         CommandMethod command = CommandRegistry.getInstance().getCommandMethod(
                 event.getName(),
                 event.getSubcommandName(),

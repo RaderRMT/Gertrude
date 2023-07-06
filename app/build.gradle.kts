@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.dv8tion:JDA:5.0.0-alpha.10")
+    implementation("net.dv8tion:JDA:5.0.0-beta.5")
 }
 
 publishing {
@@ -36,7 +36,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "fr.rader"
             artifactId = "gertrude"
-            version = "1.1.2"
+            version = "1.2.0"
             from(components["java"])
         }
     }

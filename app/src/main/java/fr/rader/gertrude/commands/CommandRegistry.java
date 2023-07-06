@@ -5,9 +5,11 @@ import fr.rader.gertrude.annotations.SlashCommand;
 import fr.rader.gertrude.lexer.Scanner;
 import fr.rader.gertrude.lexer.tokens.Token;
 import fr.rader.gertrude.lexer.tokens.TokenKind;
-import fr.rader.gertrude.utils.Checks;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.*;
+import net.dv8tion.jda.internal.utils.Checks;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -41,8 +43,8 @@ public final class CommandRegistry {
      *
      * @param command   The class to register the commands from
      */
-    public void registerCommandClass(Command command) {
-        Checks.notNull("command", "CommandRegistry#registerCommandClass", command);
+    public void registerCommandClass(@NotNull final Command command) {
+        Checks.notNull(command, "command");
 
         for (Method method : command.getCommandMethods()) {
             addCommand(command, method);
@@ -55,7 +57,7 @@ public final class CommandRegistry {
      * @param commandInstance   The command instance that owns the method
      * @param method            The command method to execute
      */
-    private void addCommand(Command commandInstance, Method method) {
+    private void addCommand(@NotNull final Command commandInstance, @NotNull final Method method) {
         SlashCommand slashCommand = method.getAnnotation(SlashCommand.class);
         this.scanner = new Scanner(slashCommand.command());
 
@@ -142,7 +144,8 @@ public final class CommandRegistry {
      * @param method    The method to inspect
      * @return          The parameters turned into JDA's {@link OptionData} so they can be added to commands/subcommands
      */
-    private List<OptionData> buildOptions(Method method) {
+    @Nullable
+    private List<OptionData> buildOptions(@NotNull final Method method) {
         List<OptionData> options = new ArrayList<>();
 
         for (Parameter parameter : method.getParameters()) {
@@ -184,7 +187,8 @@ public final class CommandRegistry {
      * @param commandName   The command's name to get
      * @return              {@link DiscordSlashCommand} if the command exists, {@code null} otherwise
      */
-    private DiscordSlashCommand getCommand(String commandName) {
+    @Nullable
+    private DiscordSlashCommand getCommand(@NotNull final String commandName) {
         for (DiscordSlashCommand slashCommand : this.commands) {
             if (slashCommand.getName().equalsIgnoreCase(commandName)) {
                 return slashCommand;
@@ -224,7 +228,8 @@ public final class CommandRegistry {
      * Return and skip the current token if the given TokenKind matches the current token's TokenKind.
      * If they don't match, we print an error message and return {@code null}
      */
-    private Token expect(TokenKind kind, String use) {
+    @Nullable
+    private Token expect(@NotNull final TokenKind kind, @NotNull final String use) {
         // we get the next token
         Token next = this.scanner.token();
 
@@ -244,6 +249,7 @@ public final class CommandRegistry {
      *
      * @return  The list of commands to send to discord
      */
+    @NotNull
     public List<SlashCommandData> getDiscordCommands() {
         List<SlashCommandData> slashCommands = new ArrayList<>();
 
@@ -262,8 +268,9 @@ public final class CommandRegistry {
      * @param subcommandGroupName   The subcommand group name
      * @return                      The {@link CommandMethod} if one matches, {@code null} otherwise
      */
-    public CommandMethod getCommandMethod(String commandName, String subcommandName, String subcommandGroupName) {
-        Checks.notNull("commandName", "CommandRegistry#getCommandMethod", commandName);
+    @Nullable
+    public CommandMethod getCommandMethod(@NotNull final String commandName, @Nullable final String subcommandName, @Nullable final String subcommandGroupName) {
+        Checks.notNull(commandName, "commandName");
 
         for (CommandMethod command : this.commandMethods) {
             if (command.matches(commandName, subcommandName, subcommandGroupName)) {
@@ -279,6 +286,7 @@ public final class CommandRegistry {
      *
      * @return  The CommandRegistry's instance
      */
+    @NotNull
     public static CommandRegistry getInstance() {
         if (instance == null) {
             instance = new CommandRegistry();

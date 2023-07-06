@@ -1,8 +1,13 @@
 package fr.rader.gertrude.commands.getters;
 
-import fr.rader.gertrude.utils.Checks;
+import fr.rader.gertrude.utils.ChannelUtils;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.Channel;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.internal.utils.Checks;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Member;
 import java.util.HashMap;
@@ -25,13 +30,24 @@ public final class ClassToOptionGetter {
      * Get a getter {@link Function} depending on the given class.
      * This Function is then used to get a specific object from JDA's {@link OptionMapping}s
      *
-     * @param clazz The class to get the getter for
-     * @return      A {@link Function} if the class has a getter for it, {@code null} otherwise
+     * @param clazz     The class to get the getter for
+     * @param option    The option to get the element from
+     * @return          A {@link Function} if the class has a getter for it, {@code null} otherwise
      */
-    public static Function<OptionMapping, Object> get(Class<?> clazz) {
-        Checks.notNull("clazz", "ClassToOptionGetter#get", clazz);
+    @Nullable
+    public static Object get(@NotNull final Class<?> clazz, @NotNull final OptionMapping option) {
+        Checks.notNull(clazz, "clazz");
 
-        return functionMap.get(clazz);
+        if (Channel.class.isAssignableFrom(clazz)) {
+            return ChannelUtils.getAsNormalChannel(option.getAsChannel());
+        }
+
+        Function<OptionMapping, Object> function = functionMap.get(clazz);
+        if (function == null) {
+            return null;
+        }
+
+        return function.apply(option);
     }
 
     static {
@@ -56,13 +72,5 @@ public final class ClassToOptionGetter {
 
         // channels
         functionMap.put(ChannelType.class,    OptionMapping::getChannelType);
-        functionMap.put(GuildChannel.class,   OptionMapping::getAsGuildChannel);
-        functionMap.put(MessageChannel.class, OptionMapping::getAsMessageChannel);
-        functionMap.put(TextChannel.class,    OptionMapping::getAsTextChannel);
-        functionMap.put(NewsChannel.class,    OptionMapping::getAsNewsChannel);
-        functionMap.put(ThreadChannel.class,  OptionMapping::getAsThreadChannel);
-        functionMap.put(AudioChannel.class,   OptionMapping::getAsAudioChannel);
-        functionMap.put(VoiceChannel.class,   OptionMapping::getAsVoiceChannel);
-        functionMap.put(StageChannel.class,   OptionMapping::getAsStageChannel);
     }
 }

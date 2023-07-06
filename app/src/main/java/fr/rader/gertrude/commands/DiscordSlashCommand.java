@@ -1,6 +1,8 @@
 package fr.rader.gertrude.commands;
 
 import net.dv8tion.jda.api.interactions.commands.build.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -17,7 +19,7 @@ public final class DiscordSlashCommand {
     private final List<SubcommandData> subcommands;
     private final List<OptionData> options;
 
-    DiscordSlashCommand(String name, String description) {
+    DiscordSlashCommand(@NotNull final String name, @NotNull final String description) {
         this.name = name;
         this.description = description;
 
@@ -33,7 +35,7 @@ public final class DiscordSlashCommand {
      * @param subcommandName        The subcommand to check
      * @return                      true if this command has the same subcommand & subcommand group, false otherwise
      */
-    boolean hasSubcommand(String subcommandGroupName, String subcommandName) {
+    boolean hasSubcommand(@Nullable final String subcommandGroupName, @NotNull final String subcommandName) {
         if (subcommandGroupName == null) {
             for (SubcommandData subcommandData : this.subcommands) {
                 if (subcommandData.getName().equalsIgnoreCase(subcommandName)) {
@@ -63,7 +65,8 @@ public final class DiscordSlashCommand {
      * @param subcommandGroupName   The subcommand group's name to get
      * @return                      {@link SubcommandGroupData} if this command has the subcommand group, {@code null} otherwise
      */
-    SubcommandGroupData getSubcommandGroup(String subcommandGroupName) {
+    @Nullable
+    SubcommandGroupData getSubcommandGroup(@NotNull final String subcommandGroupName) {
         for (SubcommandGroupData subcommandGroupData : this.subcommandGroups) {
             if (subcommandGroupData.getName().equalsIgnoreCase(subcommandGroupName)) {
                 return subcommandGroupData;
@@ -78,7 +81,7 @@ public final class DiscordSlashCommand {
      *
      * @param subcommandGroups  The subcommand group(s) to add
      */
-    void addSubcommandGroups(SubcommandGroupData... subcommandGroups) {
+    void addSubcommandGroups(@NotNull final SubcommandGroupData... subcommandGroups) {
         this.subcommandGroups.addAll(Arrays.asList(subcommandGroups));
     }
 
@@ -87,7 +90,7 @@ public final class DiscordSlashCommand {
      *
      * @param subcommandGroups  The subcommand group(s) to add
      */
-    void addSubcommandGroups(Collection<? extends SubcommandGroupData> subcommandGroups) {
+    void addSubcommandGroups(@NotNull final Collection<? extends SubcommandGroupData> subcommandGroups) {
         addSubcommandGroups(subcommandGroups.toArray(new SubcommandGroupData[0]));
     }
 
@@ -96,7 +99,7 @@ public final class DiscordSlashCommand {
      *
      * @param subcommands  The subcommand(s) to add
      */
-    void addSubcommands(SubcommandData... subcommands) {
+    void addSubcommands(@NotNull final SubcommandData... subcommands) {
         this.subcommands.addAll(Arrays.asList(subcommands));
     }
 
@@ -105,7 +108,7 @@ public final class DiscordSlashCommand {
      *
      * @param subcommands  The subcommand(s) to add
      */
-    void addSubcommands(Collection<? extends SubcommandData> subcommands) {
+    void addSubcommands(@NotNull final Collection<? extends SubcommandData> subcommands) {
         addSubcommands(subcommands.toArray(new SubcommandData[0]));
     }
 
@@ -114,7 +117,7 @@ public final class DiscordSlashCommand {
      *
      * @param options  The options(s) to add
      */
-    void addOptions(OptionData... options) {
+    void addOptions(@NotNull final OptionData... options) {
         this.options.addAll(Arrays.asList(options));
     }
 
@@ -123,10 +126,11 @@ public final class DiscordSlashCommand {
      *
      * @param options  The options(s) to add
      */
-    void addOptions(Collection<? extends OptionData> options) {
+    void addOptions(@NotNull final Collection<? extends OptionData> options) {
         addOptions(options.toArray(new OptionData[0]));
     }
 
+    @NotNull
     String getName() {
         return this.name;
     }
@@ -136,6 +140,7 @@ public final class DiscordSlashCommand {
      *
      * @return  The command as a JDA {@link SlashCommandData}
      */
+    @NotNull
     SlashCommandData build() {
         SlashCommandData command = Commands.slash(
                 this.name,

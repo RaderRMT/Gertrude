@@ -3,12 +3,14 @@ package fr.rader.gertrude.commands;
 import fr.rader.gertrude.annotations.Param;
 import fr.rader.gertrude.commands.getters.ClassToCommandElementGetter;
 import fr.rader.gertrude.commands.getters.ClassToOptionGetter;
-import fr.rader.gertrude.utils.Checks;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.internal.utils.Checks;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -29,7 +31,13 @@ public final class CommandMethod {
 
     private final Map<String, Method> autoCompleteMethods;
 
-    CommandMethod(String name, String subcommand, String subcommandGroup, Method method, Command instance) {
+    CommandMethod(
+            @NotNull final String name,
+            @Nullable final String subcommand,
+            @Nullable final String subcommandGroup,
+            @NotNull final Method method,
+            @NotNull final Command instance
+    ) {
         this.name = name;
         this.subcommand = subcommand;
         this.subcommandGroup = subcommandGroup;
@@ -44,8 +52,8 @@ public final class CommandMethod {
      *
      * @param event     The event that triggered the invoke
      */
-    public void invoke(SlashCommandInteractionEvent event) {
-        Checks.notNull("event", "CommandMethod#invoke", event);
+    public void invoke(@NotNull final SlashCommandInteractionEvent event) {
+        Checks.notNull(event, "event");
 
         List<Object> parameters = buildParameters(event);
 
@@ -66,9 +74,10 @@ public final class CommandMethod {
      * @param event         The event to give to the autocompletion method
      * @return              The list of choices to send to Discord
      */
-    public List<Choice> getAutoCompleteChoices(String optionName, CommandAutoCompleteInteractionEvent event) {
-        Checks.notNull("optionName", "CommandMethod#getAutoCompleteChoices", optionName);
-        Checks.notNull("event", "CommandMethod#getAutoCompleteChoices", event);
+    @NotNull
+    public List<Choice> getAutoCompleteChoices(@NotNull final String optionName, @NotNull final CommandAutoCompleteInteractionEvent event) {
+        Checks.notNull(optionName, "optionName");
+        Checks.notNull(event, "event");
 
         Method autoCompleteMethod = this.autoCompleteMethods.get(optionName);
         if (autoCompleteMethod == null) {
@@ -95,11 +104,14 @@ public final class CommandMethod {
      * @param event     The even to get data from
      * @return          A list of objects (the parameters) to give to the command method
      */
-    private List<Object> buildParameters(SlashCommandInteractionEvent event) {
+    @NotNull
+    private List<Object> buildParameters(@NotNull final SlashCommandInteractionEvent event) {
         List<Object> parameters = new ArrayList<>();
 
         int optionIndex = 0;
         for (Parameter parameter : this.method.getParameters()) {
+            Class<?> type = parameter.getType();
+
             // parameters with the @Param annotation have the highest priority.
             // the data will be extracted from the event's parameters
             if (parameter.isAnnotationPresent(Param.class)) {
@@ -107,30 +119,36 @@ public final class CommandMethod {
 
                 if (optionIndex >= event.getOptions().size()) {
                     parameters.add(null);
-                } else {
-                    OptionMapping option = event.getOptions().get(optionIndex);
-
-                    if (!option.getName().equals(param.name())) {
-                        parameters.add(null);
-                    } else {
-                        parameters.add(ClassToOptionGetter.get(parameter.getType()).apply(option));
-                        optionIndex++;
-                    }
+                    continue;
                 }
 
+                OptionMapping option = event.getOptions().get(optionIndex);
+                if (!option.getName().equals(param.name())) {
+                    parameters.add(null);
+                    continue;
+                }
+
+                Object paramObject = ClassToOptionGetter.get(type, option);
+                parameters.add(paramObject);
+
+                optionIndex++;
                 continue;
             }
 
-            if (ClassToCommandElementGetter.get(parameter.getType()) != null) {
-                // the next highest priority is the event's data
-                parameters.add(ClassToCommandElementGetter.get(parameter.getType()).apply(event));
-            } else if (parameter.getType().isAssignableFrom(SlashCommandInteractionEvent.class)) {
-                // the next highest priority is the event itself
-                parameters.add(event);
-            } else {
-                // the lowest priority is the parameter registered in the ParameterRegistry
-                parameters.add(ParameterRegistry.getInstance().get(parameter.getType()));
+            // the next highest priority is the event's data
+            if (ClassToCommandElementGetter.has(type)) {
+                parameters.add(ClassToCommandElementGetter.get(type, event));
+                continue;
             }
+
+            // the next highest priority is the event itself
+            if (type.isAssignableFrom(SlashCommandInteractionEvent.class)) {
+                parameters.add(event);
+                continue;
+            }
+
+            // the lowest priority is the parameter registered in the ParameterRegistry
+            parameters.add(ParameterRegistry.getInstance().get(type));
         }
 
         for (int i = parameters.size(); i < this.method.getParameterCount(); i++) {
@@ -145,7 +163,7 @@ public final class CommandMethod {
      *
      * @param options   The options to get the option names from
      */
-    void cacheAutoCompleteMethods(List<OptionData> options) {
+    void cacheAutoCompleteMethods(@NotNull final List<OptionData> options) {
         int optionIndex = 0;
         for (Parameter parameter : this.method.getParameters()) {
             Param param = parameter.getAnnotation(Param.class);
@@ -200,7 +218,7 @@ public final class CommandMethod {
      * @param subcommandGroup   The command's subcommand group
      * @return                  true if the command matches with the given string, false otherwise
      */
-    boolean matches(String name, String subcommand, String subcommandGroup) {
+    boolean matches(@NotNull final String name, @Nullable final String subcommand, @Nullable final String subcommandGroup) {
         if (!this.name.equalsIgnoreCase(name)) {
             return false;
         }

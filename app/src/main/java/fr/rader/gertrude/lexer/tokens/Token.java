@@ -1,5 +1,8 @@
 package fr.rader.gertrude.lexer.tokens;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * This is used by the lexer to turn the command string to a Discord command
  */
@@ -14,7 +17,7 @@ public final class Token {
      * @param kind      The token kind (see {@link TokenKind})
      * @param lexeme    The lexeme
      */
-    public Token(TokenKind kind, String lexeme) {
+    public Token(@NotNull final TokenKind kind, @NotNull final String lexeme) {
         this.kind = kind;
         this.lexeme = lexeme;
     }
@@ -22,6 +25,7 @@ public final class Token {
     /**
      * @return  The token kind
      */
+    @NotNull
     public TokenKind getKind() {
         return this.kind;
     }
@@ -29,6 +33,7 @@ public final class Token {
     /**
      * @return  The token lexeme
      */
+    @NotNull
     public String getLexeme() {
         return this.lexeme;
     }

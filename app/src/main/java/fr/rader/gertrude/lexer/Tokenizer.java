@@ -3,6 +3,8 @@ package fr.rader.gertrude.lexer;
 import fr.rader.gertrude.lexer.exceptions.LexingException;
 import fr.rader.gertrude.lexer.tokens.Token;
 import fr.rader.gertrude.lexer.tokens.TokenKind;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Turns the given command into tokens.
@@ -19,7 +21,7 @@ public final class Tokenizer {
      *
      * @param command   The command to read
      */
-    public Tokenizer(String command) {
+    public Tokenizer(@NotNull final String command) {
         this.command = command;
     }
 
@@ -28,6 +30,7 @@ public final class Tokenizer {
      *
      * @return  The token read from the command string
      */
+    @Nullable
     public Token readToken() {
         while (hasNext()) {
             // we get the next char
@@ -78,6 +81,7 @@ public final class Tokenizer {
      * Read a name from the command string.
      * This will continue running until reading a character where {@code isAlpha(char)} returns false
      */
+    @NotNull
     private Token name() {
         while (hasNext() && isAlpha(next())) {
             this.end++;
@@ -103,6 +107,7 @@ public final class Tokenizer {
      * Read an optional argument from the command string.
      * This will continue running until reading a '>'
      */
+    @NotNull
     private Token required() {
         while (next() != '>') {
             this.end++;
@@ -118,6 +123,7 @@ public final class Tokenizer {
      * Read an optional argument from the command string.
      * This will continue running until reading a ']'
      */
+    @NotNull
     private Token optional() {
         while (next() != ']') {
             this.end++;

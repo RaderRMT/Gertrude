@@ -1,8 +1,15 @@
 package fr.rader.gertrude.commands;
 
-import fr.rader.gertrude.utils.Checks;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.internal.utils.Checks;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Member;
 import java.util.HashMap;
@@ -26,8 +33,9 @@ public final class TypeTable {
      * @return          {@code null} if the class has no corresponding type,
      *                  or the corresponding OptionType if it exists
      */
-    public static OptionType get(Class<?> clazz) {
-        Checks.notNull("clazz", "TypeTable#get", clazz);
+    @Nullable
+    public static OptionType get(@NotNull final Class<?> clazz) {
+        Checks.notNull(clazz, "clazz");
 
         return typeTable.get(clazz);
     }
